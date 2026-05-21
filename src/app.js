@@ -365,8 +365,16 @@ function handleUserAvatarClick(e) {
   togglePINextVisibility();
 }
 function handleUserTokenClick(e) {
-  const el = e.target;
   const gs = gameState;
+  const isUserTurn =
+    gs.activeTurn === 'user' && gs.playerTurns && (gs.userDice.first || gs.userDice.second);
+
+  if (!isUserTurn) {
+    console.log('User turns complete: ', gs.playerTurns);
+    return false;
+  }
+
+  const el = e.target;
   const userToken = getTokenById(el, gs.userTokens);
   const eligibleToken = gs.tokenEligibleArr.find((token) => token.id === userToken.id);
   const dice = gs.userDice.first || gs.userDice.second;
@@ -378,26 +386,29 @@ function handleUserTokenClick(e) {
     !userToken.isOpen &&
     !userToken.isSafe &&
     !userToken.isAtFort;
-  const pathIndex = isTokenEligibleToOpen ? 0 : dice;
+  const pathIndex = isTokenEligibleToOpen ? 0 : userToken.index + dice;
   const currentState = userStateDesktop[pathIndex];
 
-  if (gs.userDice.first) {
-    // Update user index to new path location
-    userToken.index = pathIndex;
+  if (isTokenEligibleToOpen) {
     userToken.isOpen = true;
-    // Remove 'token-eligible' className from the current element
-    userToken.el.classList.remove('token-eligible');
-    // Move the user token to new path location
-    userToken.el.style.left = currentState.left;
-    userToken.el.style.top = currentState.top;
-    // Decrement player turn by one
-    gs.playerTurns -= 1;
+    userToken.isAtHome = false;
+  }
+
+  // Update user index to new path location
+  userToken.index = pathIndex;
+  // Move the user token to new path location
+  userToken.el.style.left = currentState.left;
+  userToken.el.style.top = currentState.top;
+  // Decrement player turn by one
+  gs.playerTurns -= 1;
+  // Reset eligible token className from all tokens
+  gs.tokenEligibleArr.forEach((token) => {
+    token.el.classList.remove('token-eligible');
+  });
+
+  if (gs.userDice.first) {
     gs.userDice.first = null;
 
-    // Reset eligible token className from all tokens
-    gs.tokenEligibleArr.forEach((token) => {
-      token.el.classList.remove('token-eligible');
-    });
     // Set Eligible tokens for Dice2
     gs.tokenEligibleArr = getEligibleTokens(gs.userDice.second);
     // Set eligible tokens active
@@ -405,6 +416,8 @@ function handleUserTokenClick(e) {
       token.el.classList.add('token-eligible');
     });
   } else if (gs.userDice.second) {
+    gs.userDice.second = null;
+    gs.tokenEligibleArr = [];
   }
 
   console.log('[UserTokenClick] Current gameState: ', gameState);
@@ -539,8 +552,8 @@ function setupComputerAvatar(name, url_48, url_96) {
   computerAvatarImgEl.setAttribute('alt', imgAlt);
   computerAvatarTxtEl.textContent = name;
 }
-function getTokenById(el, tokensObj) {
-  return Object.values(tokensObj).find(
+function getTokenById(el, obj) {
+  return Object.values(obj).find(
     (token) => el.classList.contains(token.id) || el.parentNode.classList.contains(token.id),
   );
 }
@@ -752,15 +765,17 @@ function getEligibleTokens(dice) {
   const canOpenToken = tokenOpenArr.includes(dice);
 
   return Object.values(userTokens).filter((token) => {
+    const isTokenAtHome =
+      token.index === 0 && token.isAtHome && !token.isOpen && !token.isSafe && !token.isAtFort;
+    const isTokenOnBoard = token.index >= 0 && !token.isAtHome && token.isOpen && !token.isAtFort;
+
     if (canOpenToken) {
       // Tokens still at home and eligible to be opened
-      return (
-        token.index === 0 && token.isAtHome && !token.isOpen && !token.isSafe && !token.isAtFort
-      );
+      return isTokenAtHome || isTokenOnBoard;
     }
 
     // Tokens already on the board and eligible to move
-    return token.index > 0 && !token.isAtHome && token.isOpen && !token.isAtFort;
+    return isTokenOnBoard;
   });
 }
 /** User dice roll custom event handler **/
@@ -789,7 +804,7 @@ function handleUserDiceRoll(e) {
     gs.playerTurns = 2;
     console.log('Eligible tokens for dice1: ', gs.tokenEligibleArr);
   } else if (getEligibleTokens(dice2).length) {
-    // Set Eligible tokens for Dice1
+    // Set Eligible tokens for Dice2
     gs.tokenEligibleArr = getEligibleTokens(dice2);
     // Set eligible tokens active
     gs.tokenEligibleArr.forEach((token) => {
