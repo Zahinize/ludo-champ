@@ -99,9 +99,6 @@
 }
 /* Apply this class dynamically when a token is selectable */
 .game-token.token-eligible > img {
-  /* animation:
-    tokenPulseBounce 1.4s cubic-bezier(0.34, 1.56, 0.64, 1) infinite,
-    tokenGlowRing 1.4s ease-out infinite; */
   animation:
     tokenPulseBounce 1.2s cubic-bezier(0.22, 1, 0.36, 1) infinite,
     tokenGlowRing 1.2s ease-out infinite;

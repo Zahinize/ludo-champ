@@ -93,6 +93,8 @@ const piNextBtn = $q('.js-pi-next');
 /** Main App screen **/
 const appBackBtnEl = $q('.js-app-back-btn');
 const appEl = $q('.js-app');
+const userAvatarEl = $q('.js-avatar-user');
+const computerAvatarEl = $q('.js-avatar-computer');
 const userAvatarImgEl = $q('.js-avatar-user-img');
 const userAvatarTxtEl = $q('.js-avatar-user-text');
 const computerAvatarImgEl = $q('.js-avatar-computer-img');
@@ -160,6 +162,12 @@ function disablePlayBtn() {
 function enablePlayBtn() {
   playBtnEl.disabled = false;
   playBtnEl.classList.add('ani-bounce');
+}
+function showPulseAnim(el) {
+  el.classList.add('ani-pulse');
+}
+function hidePulseAnim(el) {
+  el.classList.remove('ani-pulse');
 }
 
 /** Populate PI Screen if localstorage data exists **/
@@ -706,6 +714,7 @@ function setupUserDice() {
   // Make user player active as it will start the game
   userDiceRollBtnEl.disabled = false;
   setActiveTurnUser();
+  showPulseAnim(userAvatarEl);
 }
 function setupComputerDice() {
   // Create the computer dice instance with selectors
@@ -858,7 +867,9 @@ function handleUserTurnActive(e) {
 /** Computer turn active custom event handler **/
 function handleComputerTurnActive(e) {
   console.log('Computer turn active: ', e.detail);
-  // const gs = gameState;
+  // Set computer avatar as active
+  hidePulseAnim(userAvatarEl);
+  showPulseAnim(computerAvatarEl);
   setActiveTurnComputer();
   computerDiceRollBtnEl.click();
 }

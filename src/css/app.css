@@ -240,6 +240,9 @@ body {
 .ani-bounce {
   animation: bounce ease 1.5s infinite;
 }
+.ani-pulse {
+  animation: tokenGlowRing 1.2s ease-out infinite;
+}
 /* Animations */
 @keyframes shadow-pulse {
   0% {
