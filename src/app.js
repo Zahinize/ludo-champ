@@ -99,6 +99,8 @@ const userAvatarImgEl = $q('.js-avatar-user-img');
 const userAvatarTxtEl = $q('.js-avatar-user-text');
 const computerAvatarImgEl = $q('.js-avatar-computer-img');
 const computerAvatarTxtEl = $q('.js-avatar-computer-text');
+const userDiceOneEl = $q('#dice-cover-user-1');
+const userDiceTwoEl = $q('#dice-cover-user-2');
 const userDiceRollBtnEl = $q('.js-user-dice-btn');
 const computerDiceRollBtnEl = $q('.js-computer-dice-btn');
 /** Image and Audio Refs **/
@@ -380,7 +382,7 @@ function handleUserTokenClick(e) {
     gs.activeTurn === 'user' && gs.playerTurns && (gs.userDice.first || gs.userDice.second);
 
   if (!isUserTurn) {
-    console.log('User turns complete: ', gs.playerTurns);
+    console.log('No user turn left: ', gs.playerTurns);
     return false;
   }
 
@@ -425,9 +427,16 @@ function handleUserTokenClick(e) {
     gs.tokenEligibleArr.forEach((token) => {
       token.el.classList.add('token-eligible');
     });
+    // Hide pulse animation for first user dice
+    hidePulseAnim(userDiceOneEl);
+    // Show pulse animation for second user dice
+    showPulseAnim(userDiceTwoEl);
   } else if (gs.userDice.second) {
     gs.userDice.second = null;
     gs.tokenEligibleArr = [];
+    // Hide pulse animations for first and second user dice
+    hidePulseAnim(userDiceOneEl);
+    hidePulseAnim(userDiceTwoEl);
     dispatchComputerActiveTurnEvent();
   }
 
@@ -835,6 +844,8 @@ function handleUserDiceRoll(e) {
       token.el.classList.add('token-eligible');
     });
     gs.playerTurns = 2;
+    // Show pulse animation on first user dice
+    showPulseAnim(userDiceOneEl);
     console.log('Eligible tokens for dice1: ', gs.tokenEligibleArr);
   } else if (getEligibleTokens(dice2).length) {
     // Set Eligible tokens for Dice2
@@ -845,12 +856,20 @@ function handleUserDiceRoll(e) {
     });
     gs.playerTurns = 1;
     gs.userDice.first = null;
+    // Hide pulse animation on first user dice
+    hidePulseAnim(userDiceOneEl);
+    // Show pulse animation on second user dice
+    showPulseAnim(userDiceTwoEl);
     console.log('Eligible tokens for dice2: ', gs.tokenEligibleArr);
   } else {
     gs.playerTurns = 0;
     gs.userDice.first = null;
     gs.userDice.second = null;
+
     console.log('No eligible tokens for the user: ', gs.tokenEligibleArr);
+    // Hide pulse animations for first and second user dice
+    hidePulseAnim(userDiceOneEl);
+    hidePulseAnim(userDiceTwoEl);
     dispatchComputerActiveTurnEvent();
   }
 
