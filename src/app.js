@@ -6,6 +6,8 @@ import {
   defaultGameState,
   userDiceRolledEvent,
   computerDiceRolledEvent,
+  userTurnActiveEvent,
+  computerTurnActiveEvent,
   LS_USER_INFO_KEY,
   userStateDesktop,
 } from './constants';
@@ -418,6 +420,7 @@ function handleUserTokenClick(e) {
   } else if (gs.userDice.second) {
     gs.userDice.second = null;
     gs.tokenEligibleArr = [];
+    dispatchComputerActiveTurnEvent();
   }
 
   console.log('[UserTokenClick] Current gameState: ', gameState);
@@ -719,8 +722,6 @@ function setupComputerDice() {
   _computerDice.setDiceValue(_computerDice.dice1);
   _computerDice.setDiceValue(_computerDice.dice2);
   _computerDice.attachRollBtn();
-  // Disable Computer dice roll btn as user will roll first
-  computerDiceRollBtnEl.disabled = true;
 }
 function setActiveTurnUser() {
   gameState.activeTurn = 'user';
@@ -732,10 +733,30 @@ function setupCustomEvents() {
   // Detach custom events first to prevent redundant calls
   document.removeEventListener(userDiceRolledEvent, handleUserDiceRoll, false);
   document.removeEventListener(computerDiceRolledEvent, handleComputerDiceRoll, false);
+  document.removeEventListener(userTurnActiveEvent, handleUserTurnActive, false);
+  document.removeEventListener(computerTurnActiveEvent, handleComputerTurnActive, false);
 
   // Attach user and computer custom events
   document.addEventListener(userDiceRolledEvent, handleUserDiceRoll, false);
   document.addEventListener(computerDiceRolledEvent, handleComputerDiceRoll, false);
+  document.addEventListener(userTurnActiveEvent, handleUserTurnActive, false);
+  document.addEventListener(computerTurnActiveEvent, handleComputerTurnActive, false);
+}
+function dispatchUserActiveTurnEvent() {
+  // Dispatch custom event to set active turn for user
+  setTimeout(() => {
+    document.dispatchEvent(
+      new CustomEvent(userTurnActiveEvent, { detail: { activeTurn: 'user' } }),
+    );
+  }, 500);
+}
+function dispatchComputerActiveTurnEvent() {
+  // Dispatch custom event to set active turn for computer
+  setTimeout(() => {
+    document.dispatchEvent(
+      new CustomEvent(computerTurnActiveEvent, { detail: { activeTurn: 'computer' } }),
+    );
+  }, 500);
 }
 /**
  * Shows the "GAME START" animation once.
@@ -794,6 +815,9 @@ function handleUserDiceRoll(e) {
   gs.userDice.first = dice1;
   gs.userDice.second = dice2;
 
+  // Disable user dice roll button
+  userDiceRollBtnEl.disabled = true;
+
   if (getEligibleTokens(dice1).length) {
     // Set Eligible tokens for Dice1
     gs.tokenEligibleArr = getEligibleTokens(dice1);
@@ -818,15 +842,25 @@ function handleUserDiceRoll(e) {
     gs.userDice.first = null;
     gs.userDice.second = null;
     console.log('No eligible tokens for the user: ', gs.tokenEligibleArr);
+    dispatchComputerActiveTurnEvent();
   }
 
-  // Disable user dice roll button
-  // userDiceRollBtnEl.disabled = true;
   console.log('current game state: ', gameState);
 }
 /** Computer dice roll custom event handler **/
 function handleComputerDiceRoll(e) {
   console.log('Computer dice rolled: ', e.detail);
+}
+/** User turn active custom event handler **/
+function handleUserTurnActive(e) {
+  console.log('User turn active: ', e.detail);
+}
+/** Computer turn active custom event handler **/
+function handleComputerTurnActive(e) {
+  console.log('Computer turn active: ', e.detail);
+  // const gs = gameState;
+  setActiveTurnComputer();
+  computerDiceRollBtnEl.click();
 }
 
 function initGamePlay() {
@@ -841,10 +875,12 @@ function initGamePlay() {
   hideUnusedColorTokens(unusedColorsArr);
   gameState.hasGameStarted = true;
   _computerColor = activeColorsArr[1];
+
   setupLayout(_selectedColor, _computerColor, unusedColorsArr);
   setUserInfoInStorage(LS_USER_INFO_KEY, _userName, _userAvatar, _userAvatarURL);
   setupUserAvatar(_userName, _userAvatar);
   setupComputerAvatar(computerAvatar, computerAvatarURL48, computerAvatarURL96);
+
   // Hide Onboarding screen and show main App screen
   splashScreenEl.classList.add('d-none');
   appEl.classList.remove('d-none');
@@ -852,6 +888,7 @@ function initGamePlay() {
   showGameStartAnimation();
   gameStartAudio.currentTime = 0;
   playAudio(gameStartAudio);
+
   // Setup User & Computer dice UI
   setupUserDice();
   setupComputerDice();
