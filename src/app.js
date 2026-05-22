@@ -10,6 +10,7 @@ import {
   computerTurnActiveEvent,
   LS_USER_INFO_KEY,
   userStateDesktop,
+  computerStateDesktop,
 } from './constants';
 
 /** Set Global variables and cache DOM element refs **/
@@ -101,6 +102,8 @@ const computerAvatarImgEl = $q('.js-avatar-computer-img');
 const computerAvatarTxtEl = $q('.js-avatar-computer-text');
 const userDiceOneEl = $q('#dice-cover-user-1');
 const userDiceTwoEl = $q('#dice-cover-user-2');
+const computerDiceOneEl = $q('#dice-cover-computer-1');
+const computerDiceTwoEl = $q('#dice-cover-computer-2');
 const userDiceRollBtnEl = $q('.js-user-dice-btn');
 const computerDiceRollBtnEl = $q('.js-computer-dice-btn');
 /** Image and Audio Refs **/
@@ -422,7 +425,7 @@ function handleUserTokenClick(e) {
     gs.userDice.first = null;
 
     // Set Eligible tokens for Dice2
-    gs.tokenEligibleArr = getEligibleTokens(gs.userDice.second);
+    gs.tokenEligibleArr = getEligibleTokens(gs.userDice.second, gs.userTokens);
     // Set eligible tokens active
     gs.tokenEligibleArr.forEach((token) => {
       token.el.classList.add('token-eligible');
@@ -799,11 +802,11 @@ function showGameStartAnimation() {
   }, DURATION);
 }
 
-function getEligibleTokens(dice) {
-  const { tokenOpenArr, userTokens } = gameState;
+function getEligibleTokens(dice, tokenObj) {
+  const { tokenOpenArr } = gameState;
   const canOpenToken = tokenOpenArr.includes(dice);
 
-  return Object.values(userTokens).filter((token) => {
+  return Object.values(tokenObj).filter((token) => {
     const isTokenAtHome =
       token.index === 0 && token.isAtHome && !token.isOpen && !token.isSafe && !token.isAtFort;
     const isTokenOnBoard = token.index >= 0 && !token.isAtHome && token.isOpen && !token.isAtFort;
@@ -836,9 +839,9 @@ function handleUserDiceRoll(e) {
   // Disable user dice roll button
   userDiceRollBtnEl.disabled = true;
 
-  if (getEligibleTokens(dice1).length) {
+  if (getEligibleTokens(dice1, gs.userTokens).length) {
     // Set Eligible tokens for Dice1
-    gs.tokenEligibleArr = getEligibleTokens(dice1);
+    gs.tokenEligibleArr = getEligibleTokens(dice1, gs.userTokens);
     // Set eligible tokens active
     gs.tokenEligibleArr.forEach((token) => {
       token.el.classList.add('token-eligible');
@@ -847,9 +850,9 @@ function handleUserDiceRoll(e) {
     // Show pulse animation on first user dice
     showPulseAnim(userDiceOneEl);
     console.log('Eligible tokens for dice1: ', gs.tokenEligibleArr);
-  } else if (getEligibleTokens(dice2).length) {
+  } else if (getEligibleTokens(dice2, gs.userTokens).length) {
     // Set Eligible tokens for Dice2
-    gs.tokenEligibleArr = getEligibleTokens(dice2);
+    gs.tokenEligibleArr = getEligibleTokens(dice2, gs.userTokens);
     // Set eligible tokens active
     gs.tokenEligibleArr.forEach((token) => {
       token.el.classList.add('token-eligible');
@@ -875,13 +878,111 @@ function handleUserDiceRoll(e) {
 
   console.log('current game state: ', gameState);
 }
+function moveComputerToken(dice, tokenObj) {
+  const gs = gameState;
+  const isTokenEligibleToOpen =
+    gs.tokenOpenArr.indexOf(dice) > -1 &&
+    tokenObj.el &&
+    tokenObj.index === 0 &&
+    tokenObj.isAtHome &&
+    !tokenObj.isOpen &&
+    !tokenObj.isSafe &&
+    !tokenObj.isAtFort;
+  const pathIndex = isTokenEligibleToOpen ? 0 : tokenObj.index + dice;
+  const currentState = computerStateDesktop[pathIndex];
+
+  if (isTokenEligibleToOpen) {
+    tokenObj.isOpen = true;
+    tokenObj.isAtHome = false;
+  }
+
+  // Update user index to new path location
+  tokenObj.index = pathIndex;
+  // Move the user token to new path location
+  tokenObj.el.style.left = currentState.left;
+  tokenObj.el.style.top = currentState.top;
+  // Decrement player turn by one
+  gs.playerTurns -= 1;
+  // Reset eligible token className from all tokens
+  gs.tokenEligibleArr.forEach((token) => {
+    token.el.classList.remove('token-eligible');
+  });
+}
+function playComputerTurn(diceNum, dice, tokenCollection, diceElOne, diceElTwo) {
+  return new Promise((resolve, reject) => {
+    const gs = gameState;
+    const eligibleTokens = getEligibleTokens(dice, tokenCollection);
+    if (!eligibleTokens.length) {
+      console.log(`No eligible tokens for the computer dice: ${dice}`, eligibleTokens);
+      return resolve(true);
+    }
+
+    // Set Eligible tokens for Dice
+    gs.tokenEligibleArr = eligibleTokens;
+    // Set eligible tokens active
+    gs.tokenEligibleArr.forEach((token) => {
+      token.el.classList.add('token-eligible');
+    });
+
+    console.log(`Eligible tokens for computer dice: ${dice}: `, eligibleTokens);
+    const tokenObj = eligibleTokens[0];
+    moveComputerToken(dice, tokenObj);
+
+    if (diceNum === 1) {
+      console.log('Computer token selected for dice 1: ', tokenObj);
+      // Show pulse animation on first user dice
+      showPulseAnim(diceElOne);
+    } else if (diceNum === 2) {
+      // Show pulse animation on first user dice
+      hidePulseAnim(diceElOne);
+      showPulseAnim(diceElTwo);
+    }
+
+    setTimeout(() => {
+      console.log(`[ComputerTurn]: Played dice ${diceNum} turn: `, dice);
+      resolve(true);
+    }, 500);
+  });
+}
 /** Computer dice roll custom event handler **/
 function handleComputerDiceRoll(e) {
   console.log('Computer dice rolled: ', e.detail);
+  let { dice1, dice2 } = e.detail;
+
+  if (!dice1 || !dice2) {
+    console.log('Computer Dice: Invalid dice values rolled.');
+    return;
+  }
+
+  dice1 = Number(dice1);
+  dice2 = Number(dice2);
+  const gs = gameState;
+  gs.computerDice.first = dice1;
+  gs.computerDice.second = dice2;
+  gs.playerTurns = 2;
+
+  playComputerTurn(1, dice1, gs.computerTokens, computerDiceOneEl, computerDiceTwoEl)
+    .then(() => playComputerTurn(2, dice2, gs.computerTokens, computerDiceOneEl, computerDiceTwoEl))
+    .then(() => {
+      gs.computerDice.first = null;
+      gs.computerDice.second = null;
+      gs.tokenEligibleArr = [];
+      // Hide pulse animations for first and second computer dice
+      hidePulseAnim(computerDiceOneEl);
+      hidePulseAnim(computerDiceTwoEl);
+      dispatchUserActiveTurnEvent();
+      console.log('[ComputerDiceRoll]: Played both turns');
+    })
+    .catch((err) => console.log('Error in playing computer turn: ', err));
 }
 /** User turn active custom event handler **/
 function handleUserTurnActive(e) {
   console.log('User turn active: ', e.detail);
+  // Set user avatar as active
+  hidePulseAnim(computerAvatarEl);
+  showPulseAnim(userAvatarEl);
+  setActiveTurnUser();
+  userDiceRollBtnEl.disabled = false;
 }
 /** Computer turn active custom event handler **/
 function handleComputerTurnActive(e) {
