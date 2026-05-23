@@ -1,4 +1,4 @@
-import DiceRoller from './dice';
+import DiceRoller from './js/dice';
 import {
   colorSequence,
   colorMap,
@@ -11,7 +11,38 @@ import {
   LS_USER_INFO_KEY,
   userStateDesktop,
   computerStateDesktop,
-} from './constants';
+} from './js/constants';
+import {
+  $q,
+  $qall,
+  splashScreenEl,
+  vsComputerEl,
+  heroBtnContainerEl,
+  backgroundPlayEl,
+  colorSelectionList,
+  csContainerEl,
+  backBtnEl,
+  playBtnEl,
+  piWrapper,
+  userNameInputEl,
+  userAvatarList,
+  piBackBtn,
+  piNextBtn,
+  appBackBtnEl,
+  appEl,
+  userAvatarEl,
+  computerAvatarEl,
+  userAvatarImgEl,
+  userAvatarTxtEl,
+  computerAvatarImgEl,
+  computerAvatarTxtEl,
+  userDiceOneEl,
+  userDiceTwoEl,
+  computerDiceOneEl,
+  computerDiceTwoEl,
+  userDiceRollBtnEl,
+  computerDiceRollBtnEl,
+} from './js/domRefs';
 
 /** Set Global variables and cache DOM element refs **/
 const ls = window.localStorage;
@@ -71,41 +102,6 @@ const computerAvatars = [
     url_96: new URL('assets/icon-avatar-walter-white-96.png', import.meta.url).pathname,
   },
 ];
-/** DOM element Refs **/
-const $q = (sel) => document.querySelector(sel);
-const $qall = (sel) => document.querySelectorAll(sel);
-const $id = (id) => document.getElementById(id);
-/** Onboarding Splashscreen **/
-const splashScreenEl = $q('.js-splashScreen');
-const vsComputerEl = $id('vs-computer');
-const heroBtnContainerEl = $q('.js-hero-buttons');
-const backgroundPlayEl = $q('.js-icon-bg-play');
-/** Onboarding screen: Color Selection **/
-const colorSelectionList = $qall('.js-color-selection');
-const csContainerEl = $q('.js-cs-wrapper');
-const backBtnEl = $q('.js-back-btn');
-const playBtnEl = $q('.js-play-btn');
-/** Onboarding screen: Personal Information **/
-const piWrapper = $q('.js-pi-wrapper');
-const userNameInputEl = $q('.js-pi-name-input');
-const userAvatarList = $qall('.js-avatar');
-const piBackBtn = $q('.js-pi-back-btn');
-const piNextBtn = $q('.js-pi-next');
-/** Main App screen **/
-const appBackBtnEl = $q('.js-app-back-btn');
-const appEl = $q('.js-app');
-const userAvatarEl = $q('.js-avatar-user');
-const computerAvatarEl = $q('.js-avatar-computer');
-const userAvatarImgEl = $q('.js-avatar-user-img');
-const userAvatarTxtEl = $q('.js-avatar-user-text');
-const computerAvatarImgEl = $q('.js-avatar-computer-img');
-const computerAvatarTxtEl = $q('.js-avatar-computer-text');
-const userDiceOneEl = $q('#dice-cover-user-1');
-const userDiceTwoEl = $q('#dice-cover-user-2');
-const computerDiceOneEl = $q('#dice-cover-computer-1');
-const computerDiceTwoEl = $q('#dice-cover-computer-2');
-const userDiceRollBtnEl = $q('.js-user-dice-btn');
-const computerDiceRollBtnEl = $q('.js-computer-dice-btn');
 /** Image and Audio Refs **/
 const bgPlayIconPath = new URL('assets/icon-video-play.png', import.meta.url);
 const bgPauseIconPath = new URL('assets/icon-video-pause.png', import.meta.url);
