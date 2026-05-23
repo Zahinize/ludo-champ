@@ -44,7 +44,7 @@ import {
   computerDiceRollBtnEl,
 } from './js/domRefs';
 
-/** Set Global variables and cache DOM element refs **/
+/** Set Global variables **/
 const ls = window.localStorage;
 /** Onboarding: Selected token color **/
 let _selectedColor = '';
@@ -57,6 +57,7 @@ let _userAvatarURL = _personalData?.userAvatarURL || '';
 let _isBgPlayStarted = false;
 /** Main Gameplay **/
 let gameState = structuredClone(defaultGameState);
+const gs = gameState;
 let _userDice = null;
 let _computerDice = null;
 
@@ -376,7 +377,6 @@ function handleUserAvatarClick(e) {
   togglePINextVisibility();
 }
 function handleUserTokenClick(e) {
-  const gs = gameState;
   const isUserTurn =
     gs.activeTurn === 'user' && gs.playerTurns && (gs.userDice.first || gs.userDice.second);
 
@@ -828,7 +828,6 @@ function handleUserDiceRoll(e) {
 
   dice1 = Number(dice1);
   dice2 = Number(dice2);
-  const gs = gameState;
   gs.userDice.first = dice1;
   gs.userDice.second = dice2;
 
@@ -875,7 +874,6 @@ function handleUserDiceRoll(e) {
   console.log('current game state: ', gameState);
 }
 function moveComputerToken(dice, tokenObj) {
-  const gs = gameState;
   const isTokenEligibleToOpen =
     gs.tokenOpenArr.indexOf(dice) > -1 &&
     tokenObj.el &&
@@ -906,7 +904,6 @@ function moveComputerToken(dice, tokenObj) {
 }
 function playComputerTurn(diceNum, dice, tokenCollection, diceElOne, diceElTwo) {
   return new Promise((resolve, reject) => {
-    const gs = gameState;
     const eligibleTokens = getEligibleTokens(dice, tokenCollection);
     if (!eligibleTokens.length) {
       console.log(`No eligible tokens for the computer dice: ${dice}`, eligibleTokens);
@@ -952,7 +949,6 @@ function handleComputerDiceRoll(e) {
 
   dice1 = Number(dice1);
   dice2 = Number(dice2);
-  const gs = gameState;
   gs.computerDice.first = dice1;
   gs.computerDice.second = dice2;
   gs.playerTurns = 2;
