@@ -11,6 +11,8 @@ import {
   LS_USER_INFO_KEY,
   userStateDesktop,
   computerStateDesktop,
+  userStateMobile,
+  computerStateMobile,
 } from './js/constants';
 import {
   $q,
@@ -398,7 +400,7 @@ function handleUserTokenClick(e) {
     !userToken.isSafe &&
     !userToken.isAtFort;
   const pathIndex = isTokenEligibleToOpen ? 0 : userToken.index + dice;
-  const currentState = userStateDesktop[pathIndex];
+  const currentState = isTabletWidth ? userStateMobile[pathIndex] : userStateDesktop[pathIndex];
 
   if (isTokenEligibleToOpen) {
     userToken.isOpen = true;
@@ -883,7 +885,9 @@ function moveComputerToken(dice, tokenObj) {
     !tokenObj.isSafe &&
     !tokenObj.isAtFort;
   const pathIndex = isTokenEligibleToOpen ? 0 : tokenObj.index + dice;
-  const currentState = computerStateDesktop[pathIndex];
+  const currentState = isTabletWidth
+    ? computerStateMobile[pathIndex]
+    : computerStateDesktop[pathIndex];
 
   if (isTokenEligibleToOpen) {
     tokenObj.isOpen = true;
