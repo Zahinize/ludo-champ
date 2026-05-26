@@ -32,6 +32,7 @@ const userDiceTwoEl = $q('#dice-cover-user-2');
 const computerDiceOneEl = $q('#dice-cover-computer-1');
 const computerDiceTwoEl = $q('#dice-cover-computer-2');
 const userDiceRollBtnEl = $q('.js-user-dice-btn');
+const userDiceRollArrowEl = userDiceRollBtnEl.querySelector('.js-user-arrow-ind');
 const computerDiceRollBtnEl = $q('.js-computer-dice-btn');
 
 export {
@@ -64,5 +65,6 @@ export {
   computerDiceOneEl,
   computerDiceTwoEl,
   userDiceRollBtnEl,
+  userDiceRollArrowEl,
   computerDiceRollBtnEl,
 };

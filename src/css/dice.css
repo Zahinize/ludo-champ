@@ -86,6 +86,22 @@
     opacity: 0;
   }
 }
+@keyframes arrowMove {
+  0% {
+    transform: translateY(-50%) translateX(0);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: translateY(-50%) translateX(10px);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateY(-50%) translateX(0);
+    opacity: 0.6;
+  }
+}
 
 /* =========================================================
    Eligible Ludo Token Animation
@@ -134,6 +150,7 @@
   cursor: pointer;
   background: linear-gradient(135deg, #2563eb, #7c3aed);
   box-shadow: 0 12px 28px rgba(37, 99, 235, 0.28);
+  position: relative;
   transition:
     transform 180ms ease,
     box-shadow 180ms ease;
@@ -309,4 +326,31 @@
   .game-token.token-eligible > img::before {
     animation: none !important;
   }
+}
+
+/* Arrow body */
+.arrow-indicator {
+  position: absolute;
+  top: 50%;
+  left: -75px;
+  width: 44px;
+  height: 6px;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  border-radius: 999px;
+  transform: translateY(-50%);
+  animation: arrowMove 0.8s infinite ease-in-out;
+}
+
+/* Pointy arrow head */
+.arrow-indicator::after {
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-left: 18px solid #7c3aed;
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -14px;
+  width: 0;
+  height: 0;
+  transform: translateY(-50%);
 }

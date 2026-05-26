@@ -43,6 +43,7 @@ import {
   computerDiceOneEl,
   computerDiceTwoEl,
   userDiceRollBtnEl,
+  userDiceRollArrowEl,
   computerDiceRollBtnEl,
 } from './js/domRefs';
 
@@ -172,6 +173,12 @@ function showPulseAnim(el) {
 }
 function hidePulseAnim(el) {
   el.classList.remove('ani-pulse');
+}
+function addClassToEl(el, clsName) {
+  el.classList.add(clsName);
+}
+function removeClassFromEl(el, clsName) {
+  el.classList.remove(clsName);
 }
 
 /** Populate PI Screen if localstorage data exists **/
@@ -728,6 +735,8 @@ function setupUserDice() {
   _userDice.attachRollBtn();
   // Make user player active as it will start the game
   userDiceRollBtnEl.disabled = false;
+  // Show dice roll button arrow indicator
+  removeClassFromEl(userDiceRollArrowEl, 'd-none');
   setUserActiveTurn();
   showPulseAnim(userAvatarEl);
 }
@@ -840,6 +849,8 @@ function handleUserDiceRoll(e) {
 
   // Disable user dice roll button
   userDiceRollBtnEl.disabled = true;
+  // Hide dice roll button arrow indicator
+  addClassToEl(userDiceRollArrowEl, 'd-none');
 
   if (getEligibleTokens(dice1, gs.userTokens).length) {
     // Set Eligible tokens for Dice1
@@ -984,6 +995,8 @@ function handleUserTurnActive(e) {
   showPulseAnim(userAvatarEl);
   setUserActiveTurn();
   userDiceRollBtnEl.disabled = false;
+  // Show dice roll button arrow indicator
+  removeClassFromEl(userDiceRollArrowEl, 'd-none');
 }
 /** Computer turn active custom event handler **/
 function handleComputerTurnActive(e) {
