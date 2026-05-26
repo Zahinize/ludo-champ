@@ -390,6 +390,11 @@ function handleUserTokenClick(e) {
   const el = e.target;
   const userToken = getTokenById(el, gs.userTokens);
   const eligibleToken = gs.tokenEligibleArr.find((token) => token.id === userToken.id);
+  if (!eligibleToken) {
+    console.log('[UserTokenClick]: Current DOM el is not eligible.');
+    return false;
+  }
+
   const dice = gs.userDice.first || gs.userDice.second;
   const isTokenEligibleToOpen =
     eligibleToken &&
@@ -723,7 +728,7 @@ function setupUserDice() {
   _userDice.attachRollBtn();
   // Make user player active as it will start the game
   userDiceRollBtnEl.disabled = false;
-  setActiveTurnUser();
+  setUserActiveTurn();
   showPulseAnim(userAvatarEl);
 }
 function setupComputerDice() {
@@ -742,7 +747,7 @@ function setupComputerDice() {
   _computerDice.setDiceValue(_computerDice.dice2);
   _computerDice.attachRollBtn();
 }
-function setActiveTurnUser() {
+function setUserActiveTurn() {
   gameState.activeTurn = 'user';
 }
 function setActiveTurnComputer() {
@@ -977,7 +982,7 @@ function handleUserTurnActive(e) {
   // Set user avatar as active
   hidePulseAnim(computerAvatarEl);
   showPulseAnim(userAvatarEl);
-  setActiveTurnUser();
+  setUserActiveTurn();
   userDiceRollBtnEl.disabled = false;
 }
 /** Computer turn active custom event handler **/
@@ -1014,6 +1019,7 @@ function initGamePlay() {
   // Show Game start animation
   showGameStartAnimation();
   gameStartAudio.currentTime = 0;
+  // Play "Game Start" audio
   playAudio(gameStartAudio);
 
   // Setup User & Computer dice UI
