@@ -438,7 +438,7 @@ function handleUserTokenClick(e) {
     // Hide pulse animations for first and second user dice
     hidePulseAnim(userDiceOneEl);
     hidePulseAnim(userDiceTwoEl);
-    dispatchComputerActiveTurnEvent();
+    dispatchComputerTurnEvent();
   }
 
   console.log('[UserTokenClick] Current gameState: ', gameState);
@@ -761,7 +761,7 @@ function setupCustomEvents() {
   document.addEventListener(userTurnActiveEvent, handleUserTurnActive, false);
   document.addEventListener(computerTurnActiveEvent, handleComputerTurnActive, false);
 }
-function dispatchUserActiveTurnEvent() {
+function dispatchUserTurnEvent() {
   // Dispatch custom event to set active turn for user
   setTimeout(() => {
     document.dispatchEvent(
@@ -769,7 +769,7 @@ function dispatchUserActiveTurnEvent() {
     );
   }, 500);
 }
-function dispatchComputerActiveTurnEvent() {
+function dispatchComputerTurnEvent() {
   // Dispatch custom event to set active turn for computer
   setTimeout(() => {
     document.dispatchEvent(
@@ -870,7 +870,7 @@ function handleUserDiceRoll(e) {
     // Hide pulse animations for first and second user dice
     hidePulseAnim(userDiceOneEl);
     hidePulseAnim(userDiceTwoEl);
-    dispatchComputerActiveTurnEvent();
+    dispatchComputerTurnEvent();
   }
 
   console.log('current game state: ', gameState);
@@ -966,14 +966,14 @@ function handleComputerDiceRoll(e) {
       // Hide pulse animations for first and second computer dice
       hidePulseAnim(computerDiceOneEl);
       hidePulseAnim(computerDiceTwoEl);
-      dispatchUserActiveTurnEvent();
+      dispatchUserTurnEvent();
       console.log('[ComputerDiceRoll]: Played both turns');
     })
     .catch((err) => console.log('Error in playing computer turn: ', err));
 }
 /** User turn active custom event handler **/
 function handleUserTurnActive(e) {
-  console.log('User turn active: ', e.detail);
+  console.log('User turn is active: ', e.detail);
   // Set user avatar as active
   hidePulseAnim(computerAvatarEl);
   showPulseAnim(userAvatarEl);
@@ -982,7 +982,7 @@ function handleUserTurnActive(e) {
 }
 /** Computer turn active custom event handler **/
 function handleComputerTurnActive(e) {
-  console.log('Computer turn active: ', e.detail);
+  console.log('Computer turn is active: ', e.detail);
   // Set computer avatar as active
   hidePulseAnim(userAvatarEl);
   showPulseAnim(computerAvatarEl);
