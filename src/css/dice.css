@@ -102,6 +102,22 @@
     opacity: 0.6;
   }
 }
+@keyframes arrowMoveDown {
+  0% {
+    transform: translateX(-50%) translateY(0);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: translateX(-50%) translateY(12px);
+    opacity: 1;
+  }
+
+  100% {
+    transform: translateX(-50%) translateY(0);
+    opacity: 0.6;
+  }
+}
 
 /* =========================================================
    Eligible Ludo Token Animation
@@ -258,6 +274,57 @@
   height: 25vh;
   width: 100%;
 }
+/* Left Arrow */
+.arrow-indicator {
+  animation: arrowMove 0.8s infinite ease-in-out;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  border-radius: 999px;
+  position: absolute;
+  top: 50%;
+  left: -75px;
+  width: 44px;
+  height: 6px;
+  transform: translateY(-50%);
+}
+/* Pointy arrow head */
+.arrow-indicator::after {
+  border-top: 12px solid transparent;
+  border-bottom: 12px solid transparent;
+  border-left: 18px solid #7c3aed;
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: -14px;
+  width: 0;
+  height: 0;
+  transform: translateY(-50%);
+}
+
+/* Down arrow indicator */
+.arrow-indicator-down {
+  animation: arrowMoveDown 0.8s infinite ease-in-out;
+  background: linear-gradient(135deg, #2563eb, #7c3aed);
+  border-radius: 999px;
+  height: 44px;
+  left: 50%;
+  position: absolute;
+  top: -70px;
+  width: 6px;
+  transform: translateX(-50%);
+}
+/* Pointy arrow head */
+.arrow-indicator-down::after {
+  border-left: 12px solid transparent;
+  border-right: 12px solid transparent;
+  border-top: 18px solid #7c3aed;
+  bottom: -14px;
+  content: '';
+  height: 0;
+  left: 50%;
+  position: absolute;
+  width: 0;
+  transform: translateX(-50%);
+}
 
 /* Tablet screen breakpoint */
 @media (max-width: 992px) {
@@ -283,7 +350,7 @@
 /* Mobile screen breakpoint */
 @media (max-width: 768px) {
   .dice-user-container {
-    bottom: -130px;
+    bottom: -140px;
     left: 60px;
   }
   .dice-computer-container {
@@ -314,6 +381,20 @@
   .roll-btn {
     font-size: 12px;
   }
+  .arrow-indicator {
+    left: unset;
+    right: -65px;
+  }
+  .arrow-indicator:after {
+    border-left: unset;
+    border-right: 18px solid #7c3aed;
+    right: unset;
+    left: -14px;
+  }
+  .arrow-indicator-down {
+    height: 24px;
+    top: -45px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -326,31 +407,4 @@
   .game-token.token-eligible > img::before {
     animation: none !important;
   }
-}
-
-/* Arrow body */
-.arrow-indicator {
-  position: absolute;
-  top: 50%;
-  left: -75px;
-  width: 44px;
-  height: 6px;
-  background: linear-gradient(135deg, #2563eb, #7c3aed);
-  border-radius: 999px;
-  transform: translateY(-50%);
-  animation: arrowMove 0.8s infinite ease-in-out;
-}
-
-/* Pointy arrow head */
-.arrow-indicator::after {
-  border-top: 12px solid transparent;
-  border-bottom: 12px solid transparent;
-  border-left: 18px solid #7c3aed;
-  content: '';
-  position: absolute;
-  top: 50%;
-  right: -14px;
-  width: 0;
-  height: 0;
-  transform: translateY(-50%);
 }

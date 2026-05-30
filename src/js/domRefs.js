@@ -27,13 +27,21 @@ const userAvatarImgEl = $q('.js-avatar-user-img');
 const userAvatarTxtEl = $q('.js-avatar-user-text');
 const computerAvatarImgEl = $q('.js-avatar-computer-img');
 const computerAvatarTxtEl = $q('.js-avatar-computer-text');
+// User Dice Container
 const userDiceOneEl = $q('#dice-cover-user-1');
 const userDiceTwoEl = $q('#dice-cover-user-2');
+// Computer Dice Container
 const computerDiceOneEl = $q('#dice-cover-computer-1');
 const computerDiceTwoEl = $q('#dice-cover-computer-2');
+// User Dice Button
 const userDiceRollBtnEl = $q('.js-user-dice-btn');
-const userDiceRollArrowEl = userDiceRollBtnEl.querySelector('.js-user-arrow-ind');
+// Computer Dice Button
 const computerDiceRollBtnEl = $q('.js-computer-dice-btn');
+// User Dice Arrow
+const userDiceRollArrowEl = userDiceRollBtnEl.querySelector('.js-user-arrow-ind');
+// User Dice Arrow indicators
+const userDiceOneArrowEl = userDiceOneEl.querySelector('.js-arrow-ind');
+const userDiceTwoArrowEl = userDiceTwoEl.querySelector('.js-arrow-ind');
 
 export {
   $q,
@@ -67,4 +75,6 @@ export {
   userDiceRollBtnEl,
   userDiceRollArrowEl,
   computerDiceRollBtnEl,
+  userDiceOneArrowEl,
+  userDiceTwoArrowEl,
 };

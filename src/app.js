@@ -45,6 +45,8 @@ import {
   userDiceRollBtnEl,
   userDiceRollArrowEl,
   computerDiceRollBtnEl,
+  userDiceOneArrowEl,
+  userDiceTwoArrowEl,
 } from './js/domRefs';
 
 /** Set Global variables **/
@@ -440,16 +442,25 @@ function handleUserTokenClick(e) {
     gs.tokenEligibleArr.forEach((token) => {
       token.el.classList.add('token-eligible');
     });
+
     // Hide pulse animation for first user dice
     hidePulseAnim(userDiceOneEl);
     // Show pulse animation for second user dice
     showPulseAnim(userDiceTwoEl);
+    // Hide arrow indicator from the first user dice
+    addClassToEl(userDiceOneArrowEl, 'd-none');
+    // Show arrow indicator on the "second" user dice
+    removeClassFromEl(userDiceTwoArrowEl, 'd-none');
   } else if (gs.userDice.second) {
     gs.userDice.second = null;
     gs.tokenEligibleArr = [];
     // Hide pulse animations for first and second user dice
     hidePulseAnim(userDiceOneEl);
     hidePulseAnim(userDiceTwoEl);
+    // Hide arrow indicators from first and second user dice
+    addClassToEl(userDiceOneArrowEl, 'd-none');
+    addClassToEl(userDiceTwoArrowEl, 'd-none');
+
     dispatchComputerTurnEvent();
   }
 
@@ -735,8 +746,13 @@ function setupUserDice() {
   _userDice.attachRollBtn();
   // Make user player active as it will start the game
   userDiceRollBtnEl.disabled = false;
-  // Show dice roll button arrow indicator
+  // Show arrow indicator on user "dice roll" button
   removeClassFromEl(userDiceRollArrowEl, 'd-none');
+  // Hide arrow indicator on both user dice
+  addClassToEl(userDiceOneArrowEl, 'd-none');
+  addClassToEl(userDiceTwoArrowEl, 'd-none');
+
+  // Set User turn as "active" and show pulse animation
   setUserActiveTurn();
   showPulseAnim(userAvatarEl);
 }
@@ -847,9 +863,9 @@ function handleUserDiceRoll(e) {
   gs.userDice.first = dice1;
   gs.userDice.second = dice2;
 
-  // Disable user dice roll button
+  // Disable user "dice roll" button
   userDiceRollBtnEl.disabled = true;
-  // Hide dice roll button arrow indicator
+  // Hide arrow indicator on user "dice roll" button
   addClassToEl(userDiceRollArrowEl, 'd-none');
 
   if (getEligibleTokens(dice1, gs.userTokens).length) {
@@ -860,8 +876,14 @@ function handleUserDiceRoll(e) {
       token.el.classList.add('token-eligible');
     });
     gs.playerTurns = 2;
+
     // Show pulse animation on first user dice
     showPulseAnim(userDiceOneEl);
+    // Show arrow indicator on "first" user dice
+    removeClassFromEl(userDiceOneArrowEl, 'd-none');
+    // Hide arrow indicator on "second" user dice
+    addClassToEl(userDiceTwoArrowEl, 'd-none');
+
     console.log('Eligible tokens for dice1: ', gs.tokenEligibleArr);
   } else if (getEligibleTokens(dice2, gs.userTokens).length) {
     // Set Eligible tokens for Dice2
@@ -872,20 +894,31 @@ function handleUserDiceRoll(e) {
     });
     gs.playerTurns = 1;
     gs.userDice.first = null;
+
     // Hide pulse animation on first user dice
     hidePulseAnim(userDiceOneEl);
     // Show pulse animation on second user dice
     showPulseAnim(userDiceTwoEl);
+
+    // Hide arrow indicator on "first" user dice
+    addClassToEl(userDiceOneArrowEl, 'd-none');
+    // Show arrow indicator on "second" user dice
+    removeClassFromEl(userDiceTwoArrowEl, 'd-none');
+
     console.log('Eligible tokens for dice2: ', gs.tokenEligibleArr);
   } else {
     gs.playerTurns = 0;
     gs.userDice.first = null;
     gs.userDice.second = null;
-
     console.log('No eligible tokens for the user: ', gs.tokenEligibleArr);
+
     // Hide pulse animations for first and second user dice
     hidePulseAnim(userDiceOneEl);
     hidePulseAnim(userDiceTwoEl);
+    // Hide arrow indicators on "first" and "second" user dice
+    addClassToEl(userDiceOneArrowEl, 'd-none');
+    addClassToEl(userDiceTwoArrowEl, 'd-none');
+
     dispatchComputerTurnEvent();
   }
 
@@ -995,7 +1028,7 @@ function handleUserTurnActive(e) {
   showPulseAnim(userAvatarEl);
   setUserActiveTurn();
   userDiceRollBtnEl.disabled = false;
-  // Show dice roll button arrow indicator
+  // Show arrow indicator on user "dice roll" button
   removeClassFromEl(userDiceRollArrowEl, 'd-none');
 }
 /** Computer turn active custom event handler **/
