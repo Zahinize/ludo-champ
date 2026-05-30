@@ -61,8 +61,7 @@ let _userAvatar = _personalData?.userAvatar || '';
 let _userAvatarURL = _personalData?.userAvatarURL || '';
 let _isBgPlayStarted = false;
 /** Main Gameplay **/
-let gameState = structuredClone(defaultGameState);
-const gs = gameState;
+let gs = structuredClone(defaultGameState);
 let _userDice = null;
 let _computerDice = null;
 
@@ -297,22 +296,37 @@ function handleAppBackBtnClick() {
   }
 
   // Reset Game State
-  gameState = structuredClone(defaultGameState);
+  gs = structuredClone(defaultGameState);
   // Reset user dice refs and UI
   _userDice.destroy();
   _userDice = null;
   // Reset computer dice refs and UI
   _computerDice.destroy();
   _computerDice = null;
+
   // Hide App screen and show user onboarding screen
   appEl.classList.add('d-none');
   splashScreenEl.classList.remove('d-none');
   // Reset user onboarding
   csContainerEl.classList.add('d-none');
   heroBtnContainerEl.classList.remove('d-none');
+
+  // Hide pulse animation from User and Computer avatars
+  hidePulseAnim(userAvatarEl);
+  hidePulseAnim(computerAvatarEl);
+  // Hide pulse animation for first and second User dice
+  hidePulseAnim(userDiceOneEl);
+  hidePulseAnim(userDiceTwoEl);
+  // Hide pulse animation for first and second Computer dice
+  hidePulseAnim(computerDiceOneEl);
+  hidePulseAnim(computerDiceTwoEl);
+
   // Show all color tokens
   $qall('.js-token').forEach((node) => {
-    node.classList.remove('d-none');
+    node.classList.remove('d-none', 'token-eligible');
+    // Reset every token position
+    node.style.left = '';
+    node.style.top = '';
     const computerClsName = Array.from(node.classList).find((item) =>
       item.includes('game-token-computer-'),
     );
@@ -329,9 +343,9 @@ function handleAppBackBtnClick() {
       node.classList.remove(userClsName);
     }
   });
+
   // Reset onboarding screens
   resetColorSelectScreen();
-  // resetPIScreen();
   _computerColor = '';
 }
 function handleBgPlayClick(e) {
@@ -464,7 +478,7 @@ function handleUserTokenClick(e) {
     dispatchComputerTurnEvent();
   }
 
-  console.log('[UserTokenClick] Current gameState: ', gameState);
+  console.log('[UserTokenClick] Current game state: ', gs);
 }
 function pauseAudio(audioRef) {
   audioRef.pause();
@@ -607,7 +621,7 @@ function setUserTokens() {
   const thirdToken = $q('.game-token.game-token-user-3');
   const fourthToken = $q('.game-token.game-token-user-4');
 
-  gameState.userTokens = {
+  gs.userTokens = {
     first: {
       el: firstToken,
       id: 'game-token-user-1',
@@ -674,7 +688,7 @@ function setComputerTokens() {
   const thirdToken = $q('.game-token.game-token-computer-3');
   const fourthToken = $q('.game-token.game-token-computer-4');
 
-  gameState.computerTokens = {
+  gs.computerTokens = {
     first: {
       el: firstToken,
       id: 'game-token-computer-1',
@@ -773,10 +787,10 @@ function setupComputerDice() {
   _computerDice.attachRollBtn();
 }
 function setUserActiveTurn() {
-  gameState.activeTurn = 'user';
+  gs.activeTurn = 'user';
 }
 function setActiveTurnComputer() {
-  gameState.activeTurn = 'computer';
+  gs.activeTurn = 'computer';
 }
 function setupCustomEvents() {
   // Detach custom events first to prevent redundant calls
@@ -831,7 +845,7 @@ function showGameStartAnimation() {
 }
 
 function getEligibleTokens(dice, tokenObj) {
-  const { tokenOpenArr } = gameState;
+  const { tokenOpenArr } = gs;
   const canOpenToken = tokenOpenArr.includes(dice);
 
   return Object.values(tokenObj).filter((token) => {
@@ -922,7 +936,7 @@ function handleUserDiceRoll(e) {
     dispatchComputerTurnEvent();
   }
 
-  console.log('current game state: ', gameState);
+  console.log('current game state: ', gs);
 }
 function moveComputerToken(dice, tokenObj) {
   const isTokenEligibleToOpen =
@@ -1051,7 +1065,7 @@ function initGamePlay() {
   } = computerAvatars[Math.floor(Math.random() * 5)];
 
   hideUnusedColorTokens(unusedColorsArr);
-  gameState.hasGameStarted = true;
+  gs.hasGameStarted = true;
   _computerColor = activeColorsArr[1];
 
   setupLayout(_selectedColor, _computerColor, unusedColorsArr);
@@ -1082,12 +1096,7 @@ function initGamePlay() {
   console.log('unused colors: ', unusedColorsArr);
   console.log('username: ', _userName, ', _userAvatar: ', _userAvatar);
   console.log('computer Avatar: ', computerAvatar, ', computer avatar URL: ', computerAvatarURL96);
-  console.log(
-    'user tokens: ',
-    gameState.userTokens,
-    ', computer tokens: ',
-    gameState.computerTokens,
-  );
+  console.log('user tokens: ', gs.userTokens, ', computer tokens: ', gs.computerTokens);
 }
 
 console.log('Ludo game JS loaded.');
