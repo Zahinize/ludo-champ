@@ -803,7 +803,7 @@ Timeline:
 }
 /** Splash Screen **/
 .image-hero > img {
-  width: 500px;
+  width: 550px;
   height: auto;
 }
 .color-select {
@@ -904,15 +904,12 @@ Timeline:
 }
 /* Large (lg) screen breakpoint */
 @media (max-width: 1024px) {
-  .image-hero > img {
-    width: 400px;
-  }
 }
 /* Tablet screen breakpoint */
 @media (max-width: 992px) {
   /** Game responsive layout **/
   .image-hero > img {
-    width: 300px;
+    width: 370px;
   }
   .game-wrapper {
     height: 360px;
@@ -1233,5 +1230,8 @@ Timeline:
   }
   .sm\:font-l {
     font-size: 16px !important;
+  }
+  .sm.font-xl {
+    font-size: 24px !important;
   }
 }
